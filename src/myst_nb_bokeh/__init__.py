@@ -7,6 +7,7 @@ __email__ = "bryan.w.weber@gmail.com"
 __version__ = "0.5.3"
 
 import json
+import random
 from textwrap import dedent
 from typing import TYPE_CHECKING, Optional, cast
 
@@ -175,6 +176,22 @@ class BokehGlueDomain(Domain):
 
         self.data["has_bokeh"][docname] = any(document.traverse(bokeh_in_output))
 
+
+def has_bokeh() -> None:
+    """Indicate that this page has bokeh outputs.
+
+    This may be necessary if a page only glues bokeh figures produced on other
+    pages.
+    """
+    # MyST-NB machinery requires the process of a name. It seems better to
+    # choose a name that is likely unique, so we use a random 6 digit number
+    metadata = {"scrapbook": {"name": "".join(random.choices("0123456789", k=6)),
+                              "has_bokeh": True}}
+    ipy_display(
+        {},
+        raw=True,
+        metadata=metadata,
+    )
 
 def glue_bokeh(name: str, variable: object, display: bool = False) -> None:
     """Glue Bokeh figures into the cell output.
